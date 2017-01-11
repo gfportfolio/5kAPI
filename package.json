@@ -1,0 +1,11 @@
+{
+  "name": "5kapi",
+  "version": "1.0.0",
+  "description": "API for 5K App",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "Gavin Farnsworth",
+  "license": "ISC"
+}
