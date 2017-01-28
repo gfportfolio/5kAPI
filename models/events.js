@@ -1,9 +1,8 @@
 var connection = require('../connection');
 
-function Events() {
+function events() {
 
-}
-module.exports = new Events();
+
 
 this.get = function(res){
   connection.acquire(function(err,con){
@@ -54,3 +53,5 @@ this.update = function(events, res) {
       });
     });
   };
+}
+module.exports = new events();
