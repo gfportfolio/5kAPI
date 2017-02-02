@@ -4,41 +4,42 @@ function events() {
 
 
 
-this.get = function(res){
-  connection.acquire(function(err,con){
-    con.query('select * from events', function(err, result){
-      con.release();
-      res.send(result);
+  this.get = function(res){
+    connection.acquire(function(err,con){
+      con.query('select * from events', function(err, result){
+        con.release();
+        res.send(result);
+      })
     })
-  })
-}
+  }
 
-this.create = function(events, res){
-  connection.acquire(function(err,con){
-    con.query('insert into events set', event, function(err,result){
-      con.release();
-      if(err){
-        res.send({status: 1, message: 'TODO creation failed'});
-      }
-      else {
-        res.send({status: 0, message: 'TODO created successfully'});
-      }
+  this.create = function(events, res){
+    connection.acquire(function(err,con){
+      var query = JSON.stringify(events[0]);
+        con.query('insert into events set ?', query, function(err,result){
+          con.release();
+          if(err){
+            res.send({status: 1, message: 'TODO creation failed', error:err});
+          }
+          else {
+            res.send({status: 0, message: 'TODO created successfully'});
+          }
+        })
     })
-  })
-}
+  }
 
-this.update = function(events, res) {
-  connection.acquire(function(err, con) {
-    con.query('update events set ? where id = ?', [events, events.id], function(err, result) {
-      con.release();
-      if (err) {
-        res.send({status: 1, message: 'TODO update failed'});
-      } else {
-        res.send({status: 0, message: 'TODO updated successfully'});
-      }
+  this.update = function(events, res) {
+    connection.acquire(function(err, con) {
+      con.query('update events set ? where id = ?', [events, events.id], function(err, result) {
+        con.release();
+        if (err) {
+          res.send({status: 1, message: 'TODO update failed'});
+        } else {
+          res.send({status: 0, message: 'TODO updated successfully'});
+        }
+      });
     });
-  });
-};
+  };
 
 
   this.delete = function(id, res) {
