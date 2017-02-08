@@ -15,8 +15,21 @@ function events() {
 
   this.create = function(events, res){
     connection.acquire(function(err,con){
-      var query = JSON.stringify(events[0]);
-        con.query('insert into events set ?', query, function(err,result){
+      var queryBuilder = "insert into events (Name,StartTime,EndTime,LoadKey) values ";
+      var rowcounter = 0;
+      for(var thisEvent of events){
+        queryBuilder+="('"+thisEvent.Name+"','"+thisEvent.StartTime+"','"+thisEvent.EndTime+"',"+thisEvent.LoadKey+")";
+            rowcounter++;
+            if(rowcounter<events.length) {
+              queryBuilder+=",";
+            }
+            else{
+              queryBuilder+=";";
+
+            }
+      }
+      con.query(queryBuilder,"",function(err,result){
+
           con.release();
           if(err){
             res.send({status: 1, message: 'TODO creation failed', error:err});
