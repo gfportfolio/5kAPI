@@ -15,21 +15,32 @@ function events() {
 
   this.create = function(events, res){
     connection.acquire(function(err,con){
-      var queryBuilder = "insert into events (Name,StartTime,EndTime,LoadKey) values ";
+      var queryBuilder = "insert into `events` (`Name`,`StartTime`,`EndTime`,`LoadKey`) VALUES ";
       var rowcounter = 0;
       for(var thisEvent of events){
-        queryBuilder+="('"+thisEvent.Name+"','"+thisEvent.StartTime+"','"+thisEvent.EndTime+"',"+thisEvent.LoadKey+")";
+        if(typeof thisEvent.StartTime === 'undefined'){
+          thisEvent.StartTime="NULL";
+        }
+                else{
+          thisEvent.StartTime="'"+thisEvent.StartTime+"'";
+        }
+        if(typeof thisEvent.EndTime === 'undefined'){
+          thisEvent.EndTime="NULL";
+        }
+        else{
+          thisEvent.EndTime="'"+thisEvent.EndTime+"'";
+        }
+        queryBuilder+="('"+thisEvent.Name+"',"+thisEvent.StartTime+","+thisEvent.EndTime+","+thisEvent.LoadKey+")";
             rowcounter++;
-            if(rowcounter<events.length) {
-              queryBuilder+=",";
+           if(rowcounter<events.length) {
+             queryBuilder+=",";
             }
-            else{
+           else{
               queryBuilder+=";";
 
             }
       }
-      con.query(queryBuilder,"",function(err,result){
-
+      con.query(queryBuilder,function(err,result){
           con.release();
           if(err){
             res.send({status: 1, message: 'TODO creation failed', error:err});
