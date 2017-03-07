@@ -4,12 +4,29 @@ function events() {
 
 
 
-  this.get = function (res) {
+  this.get = function (query, res) {
     connection.acquire(function (err, con) {
-      con.query('select * from events', function (err, result) {
-        con.release();
-        res.send(result);
-      })
+      var queryBuilder = 'select * from events'
+      var queryWhere = [];
+      if (typeof query.id  !== 'undefined') {
+        queryWhere.push('id=' + query.id);
+      }
+      if (typeof query.LoadKey  !== 'undefined') {
+        queryWhere.push('LoadKey=' + query.LoadKey);
+      }
+      if (queryWhere.length > 0) {
+        queryBuilder += " where ";
+      }
+      queryWhere.forEach((item, index) => {
+        if (index >= 1) {
+          queryBuilder += ' and ';
+        }
+        queryBuilder += item;
+      });
+      con.query(queryBuilder, function (err, result) {
+          con.release();
+          res.send(result);
+        })
     })
   }
 
@@ -61,19 +78,19 @@ function events() {
       }
       var queryBuilder = 'update events set';
       if (typeof event.StartTime !== 'undefined') {
-        queryBuilder += " StartTime ='" + event.StartTime+"'";
+        queryBuilder += " StartTime ='" + event.StartTime + "'";
       }
-      if (typeof event.StartTime !== 'undefined'&& typeof event.EndTime !== 'undefined') {
+      if (typeof event.StartTime !== 'undefined' && typeof event.EndTime !== 'undefined') {
         queryBuilder += ",";
       }
       if (typeof event.EndTime !== 'undefined') {
-        queryBuilder += " EndTime ='" + event.EndTime+"'";
+        queryBuilder += " EndTime ='" + event.EndTime + "'";
       }
-      if(typeof event.StartTime === 'undefined' && typeof event.EndTime === 'undefined'){
+      if (typeof event.StartTime === 'undefined' && typeof event.EndTime === 'undefined') {
         res.send({ status: 2, message: 'Nothing to change' });
         return;
       }
-      queryBuilder+=" Where Id ="+event.Id;
+      queryBuilder += " Where Id =" + event.Id;
       con.query(queryBuilder, function (err, result) {
         con.release();
         if (err) {
@@ -88,7 +105,7 @@ function events() {
 
   this.delete = function (id, res) {
     connection.acquire(function (err, con) {
-      con.query('delete from events where id = '+[id], function (err, result) {
+      con.query('delete from events where id = ' + [id], function (err, result) {
         con.release();
         if (err) {
           res.send({ status: 1, message: 'Failed to delete' });

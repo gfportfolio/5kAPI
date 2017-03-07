@@ -3,7 +3,7 @@ var events = require('./models/events');
 module.exports = {
   configure: function(app) {
     app.get('/events/', function(req, res) {
-      events.get(res);
+      events.get(req.query,res);
     });
 
     app.post('/events/', function(req, res) {
